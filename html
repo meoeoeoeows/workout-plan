@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>my workout plan ♡</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* dreamy water-pastel background with floating sparkles */
+    body {
+      background: linear-gradient(to bottom right, #fce8f3, #e4f8ff, #f9f2ff);
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: #4a2f40;
+      padding: 40px;
+      max-width: 720px;
+      margin: auto;
+      text-transform: lowercase;
+      line-height: 1.7;
+      letter-spacing: 0.3px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* floating sparkles animation */
+    body::before, body::after {
+      content: '';
+      position: fixed;
+      top: -10%;
+      left: 50%;
+      width: 200vw;
+      height: 200vh;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 10% 20%, #ffe6f7, transparent),
+        radial-gradient(3px 3px at 30% 40%, #ffd0e9, transparent),
+        radial-gradient(1.5px 1.5px at 50% 60%, #ffb6d9, transparent),
+        radial-gradient(2.5px 2.5px at 80% 80%, #ffcce5, transparent);
+      background-repeat: repeat;
+      animation: sparkleDrift 25s linear infinite;
+      z-index: 0;
+      opacity: 0.35;
+    }
+
+    body::after {
+      animation-delay: 12.5s;
+      opacity: 0.2;
+    }
+
+    @keyframes sparkleDrift {
+      0% { background-position: 0 0, 0 0, 0 0, 0 0; }
+      100% { background-position: 200px 200px, -150px 300px, 400px 400px, -300px 100px; }
+    }
+
+    /* header - NOT sticky anymore */
+    header {
+      background: linear-gradient(to right, #ffc0e2, #e5d1ff, #bcf2ff);
+      padding: 24px 0;
+      z-index: 10;
+      border-radius: 0 0 18px 18px;
+      box-shadow: 0 4px 20px rgba(255, 192, 226, 0.5);
+      text-align: center;
+      font-weight: 700;
+      font-size: 2.6rem;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      user-select: none;
+      margin-bottom: 24px;
+    }
+
+    /* shimmer on hover for title */
+    header:hover {
+      background-position: 100% 0;
+      transition: background-position 0.7s ease;
+    }
+
+    /* collapsible container styling */
+    .day {
+      background: linear-gradient(to bottom, #fff6fc, #f1f8ff);
+      border-radius: 22px;
+      margin-bottom: 30px;
+      border: 3px double #cde9f9;
+      box-shadow: 0 12px 30px rgba(194, 228, 255, 0.3);
+      backdrop-filter: blur(3px);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      transition: max-height 0.5s ease, padding 0.5s ease;
+      max-height: 6000px; /* open by default */
+      padding: 30px;
+    }
+
+    .day.collapsed {
+      max-height: 50px; /* height of header */
+      padding: 10px 30px;
+      cursor: pointer;
+    }
+
+    /* day header */
+    .day h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(to right, #b5e2ff, #eecbff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: text-shadow 0.4s ease;
+      margin: 0;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .day h2:hover {
+      text-shadow: 0 0 10px #d4b3ff, 0 0 20px #d4b3ff;
+    }
+
+    /* toggle icon */
+    .toggle-icon {
+      font-weight: 900;
+      font-size: 1.3rem;
+      color: #9b598f;
+      transition: transform 0.3s ease;
+      user-select: none;
+      margin-left: 12px;
+    }
+    .day.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    /* workout list */
+    ul[role="list"] {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 20px;
+    }
+
+    li[role="listitem"] {
+      background: linear-gradient(to right, #fff1f9, #f3faff);
+      padding: 14px 20px;
+      margin: 12px 0;
+      border-radius: 16px;
+      box-shadow: 0 4px 15px rgba(221, 241, 255, 0.35);
+      font-size: 1.05rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+    }
+    li[role="listitem"]::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 6px;
+      height: 100%;
+      background: linear-gradient(to bottom, #e0f4ff, #ffe3f9, #dff6ff);
+      border-radius: 4px 0 0 4px;
+      opacity: 0.9;
+    }
+    li[role="listitem"]:hover,
+    li[role="listitem"]:focus {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(255, 210, 240, 0.5);
+      outline: none;
+    }
+    li.checked {
+      color: #a874b6;
+      text-decoration: line-through;
+      opacity: 0.6;
+      transition: color 0.3s ease, opacity 0.3s ease;
+      position: relative;
+    }
+    li.checked::after {
+      content: "✓";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9b59b6;
+      font-weight: 700;
+      font-size: 1.3rem;
+      user-select: none;
+    }
+
+    /* --- Popup speech bubble --- */
+    .speech-bubble {
+      position: absolute;
+      top: -34px;
+      right: 10px;
+      background: #ffc0d3;
+      color: #7d4d6e;
+      font-size: 0.8rem;
+      padding: 6px 10px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #f77fb2;
+      pointer-events: none;
+      opacity: 0;
+      transform-origin: center;
+      transition: opacity 0.3s ease;
+      user-select: none;
+      white-space: nowrap;
+      font-weight: 700;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      letter-spacing: 0.4px;
+      z-index: 10;
+    }
+    .speech-bubble.show {
+      opacity: 1;
+      animation: bubble-fade 2s forwards;
+    }
+    @keyframes bubble-fade {
+      0% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+
+    /* bounce + sparkle on checked */
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes sparkle {
+      0%, 100% { filter: drop-shadow(0 0 2px #f48fb1); }
+      50% { filter: drop-shadow(0 0 8px #f48fb1); }
+    }
+    li.checked.bounce-sparkle {
+      animation: bounce 0.4s ease forwards, sparkle 0.8s ease forwards;
+      position: relative;
+      z-index: 5;
+    }
+
+    /* Animate day fade-in on scroll */
+    .day.animate {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .day.animate.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* WEEK TRACKER - minimal style */
+    .week-tracker {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      user-select: none;
+      font-weight: 700;
+      font-family: 'Zen Maru Gothic', sans-serif;
+      color: #a47eb3;
+    }
+    .week-tracker .day-box {
+      width: 36px;
+      height: 48px;
+      border-radius: 14px;
+      background: #fce8f3;
+      color: #a47eb3;
+      font-size: 1rem;
+      cursor: default;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      box-shadow: none;
+      transition: background 0.3s ease, color 0.3s ease;
+      position: relative;
+    }
+    .week-tracker .day-box.active {
+      background: #f9c7dc;
+      color: #7d4d6e;
+      font-weight: 800;
+      box-shadow: 0 0 12px #f77fb2;
+    }
+    .week-tracker .day-box.checked {
+      opacity: 0.5;
+      text-decoration: line-through;
+      color: #926ca9;
+    }
+    .week-tracker .day-box .abbr {
+      font-size: 1.2rem;
+      line-height: 1;
+      margin-bottom: 4px;
+      font-weight: 800;
+    }
+    .week-tracker .day-box .date {
+      font-size: 0.7rem;
+      line-height: 1;
+      user-select: none;
+      color: #bb8ca6;
+      font-weight: 600;
+    }
+
+    .today-info {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #9b598f;
+      margin-bottom: 12px;
+      user-select: none;
+      letter-spacing: 0.4px;
+      font-family: 'Zen Maru Gothic', sans-serif;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 20px;
+      }
+      header {
+        font-size: 2rem;
+        padding: 15px 0;
+        margin-bottom: 20px;
+      }
+      .day {
+        padding: 20px;
+      }
+      .day.collapsed {
+        max-height: 50px;
+        padding: 10px 20px;
+      }
+      .day h2 {
+        font-size: 1.3rem;
+      }
+      li[role="listitem"] {
+        font-size: 1rem;
+        padding: 16px 20px;
+      }
+      .week-tracker {
+        gap: 8px;
+      }
+      .week-tracker .day-box {
+        width: 30px;
+        height: 40px;
+        font-size: 0.85rem;
+      }
+      .week-tracker .day-box .abbr {
+        font-size: 1rem;
+      }
+      .week-tracker .day-box .date {
+        font-size: 0.55rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>ʚɞ ⁺˖ ⸝⸝ workout plan ⸝⸝˖⁺ʚɞ</header>
+
+<div class="today-info"></div>
+<div class="week-tracker"></div>
+
+<!-- DAY 1 - Monday -->
+<section class="day" id="day1">
+  <h2>
+    day 1 – monday 🪼⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 min each side ૮ ․ ․ ྀིა</li>
+    <li role="listitem" tabindex="0">side lying leg raises – 1 min each side ⋆. 𐙚 ˚</li>
+    <li role="listitem" tabindex="0">hip thrusts – 1 min each side ₍ᐢ._.ᐢ₎♡</li>
+    <li role="listitem" tabindex="0">good mornings – 1 min .ᐟ.ᐟ</li>
+    <li role="listitem" tabindex="0">hamstring bridge w/ block squeeze – 3 × 8 reps ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧</li>
+    <li role="listitem" tabindex="0">weighted deadbug – 3 × 6 each side ⋆.𐙚 ̊</li>
+    <li role="listitem" tabindex="0">double leg rdl – 3 × 10 reps ㅤ♡ྀི ₊</li>
+  </ul>
+</section>
+
+<!-- DAY 2 - Tuesday -->
+<section class="day" id="day2">
+  <h2>
+    day 2 – tuesday 🐠⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">foam roll tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hip thrusts – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">back extension machine – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hamstring bridge w/ block squeeze – 3 sets x 8 reps</li>
+    <li role="listitem" tabindex="0">deadbug – 3 sets x 6 each side reps</li>
+    <li role="listitem" tabindex="0">double leg rdl – 3 sets x 10 reps</li>
+    <li role="listitem" tabindex="0">low ceiling split squat jump – 3 sets x 4 each side reps x 2-5 kg</li>
+    <li role="listitem" tabindex="0">squatted calf raise – 3 sets x 15 reps</li>
+    <li role="listitem" tabindex="0">safety bar squat – 3 sets x 5 reps @ 7 rpe</li>
+    <li role="listitem" tabindex="0">short seated dumbbell oh press – 3 sets x 10 reps @ 8 rpe</li>
+    <li role="listitem" tabindex="0">kickstand hinge – 3 sets x 8 each side reps</li>
+    <li role="listitem" tabindex="0">standing dumbbell curl – 3 sets x 2 rir reps</li>
+  </ul>
+</section>
+
+<!-- DAY 3 - Wednesday -->
+<section class="day" id="day3">
+  <h2>
+    day 3 – wednesday 🐬⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">foam roll tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hip thrusts – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">back extension machine – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hamstring bridge w/ block squeeze – 3 sets x 10 reps</li>
+    <li role="listitem" tabindex="0">deadbug – 3 sets x 6 each side reps</li>
+    <li role="listitem" tabindex="0">single leg rdl – 3 sets x 5 each side reps</li>
+  </ul>
+</section>
+
+<!-- DAY 4 - Thursday -->
+<section class="day" id="day4">
+  <h2>
+    day 4 – thursday 🐳⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">foam roll tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hip thrust – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">back extension machine – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hamstring bridge w/ block squeeze – 3 sets x 10 reps</li>
+    <li role="listitem" tabindex="0">deadbug – 3 sets x 6 each side reps</li>
+    <li role="listitem" tabindex="0">double leg rdl – 3 sets x 10 reps</li>
+    <li role="listitem" tabindex="0">push up iso hold – 1 set x amap reps</li>
+    <li role="listitem" tabindex="0">kickstand chop – 3 sets x 20 each side reps x 3-5 kg</li>
+    <li role="listitem" tabindex="0">incline fly press – 4 sets x 10 reps @ 8 rpe</li>
+    <li role="listitem" tabindex="0">batwing row – 4 sets x 10 reps @ 8 rpe</li>
+    <li role="listitem" tabindex="0">lateral step up – 3 sets x 8 reps @ 8 rpe</li>
+    <li role="listitem" tabindex="0">rower hamstring curl – 1 set x 50 reps</li>
+  </ul>
+</section>
+
+<!-- DAY 5 - Friday -->
+<section class="day" id="day5">
+  <h2>
+    day 5 – friday 🐢⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">foam roll tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">back extension machine – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hip thrust – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">9090 hamstring bridge w/ block squeeze – 3 sets x 8 reps</li>
+    <li role="listitem" tabindex="0">weighted deadbug – 3 sets x 8 each side reps</li>
+    <li role="listitem" tabindex="0">single leg rdl – 3 sets x 6 each side reps</li>
+  </ul>
+</section>
+
+<!-- DAY 6 - Saturday -->
+<section class="day" id="day6">
+  <h2>
+    day 6 – saturday 🐚⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">trigger ball tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">trigger ball lower back – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">trigger ball glute – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">9090 hamstring bridge w/ block squeeze – 3 sets x 8 reps</li>
+    <li role="listitem" tabindex="0">weighted deadbug – 3 sets x 8 each side reps</li>
+    <li role="listitem" tabindex="0">single leg rdl – 3 sets x 5 each side reps</li>
+    <li role="listitem" tabindex="0">soleus slouch – 3 sets x 3 each side reps</li>
+    <li role="listitem" tabindex="0">slalom leap – 3 sets x 8 contacts reps</li>
+    <li role="listitem" tabindex="0">trap bar deadlift – 4 sets x 4 reps @ 7 rpe</li>
+    <li role="listitem" tabindex="0">chin up v2 – 3 sets x 4-6 reps</li>
+    <li role="listitem" tabindex="0">seated cable rotation – 3 sets x 8 each side reps @ 7 rpe</li>
+  </ul>
+</section>
+
+<!-- DAY 7 - Sunday -->
+<section class="day" id="day7">
+  <h2>
+    day 7 – sunday 🦋⋆.ೃ࿔*:･
+    <span class="toggle-icon">▾</span>
+  </h2>
+  <ul role="list">
+    <li role="listitem" tabindex="0">foam roll quad – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">foam roll tfl – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">back extension machine – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">hip thrust – 1 set x 1 minute each side rep</li>
+    <li role="listitem" tabindex="0">9090 hamstring bridge w/ block squeeze – 3 sets x 8 reps</li>
+    <li role="listitem" tabindex="0">weighted deadbug – 3 sets x 8 each side reps</li>
+    <li role="listitem" tabindex="0">single leg rdl – 3 sets x 6 each side reps</li>
+  </ul>
+</section>
+
+<script>
+  // Motivational popup messages
+  const workouts = document.querySelectorAll('li[role="listitem"]');
+
+  const messages = [
+    "locked in frfr",
+    "what a pro",
+    "so skilled",
+    "wooow great job",
+    "ripped",
+    "go off diva",
+    "i believe in u",
+    "ashton halls type shi",
+    "slay",
+    "that’s the spirit",
+    "unstoppable",
+    "sheesh",
+    "ate",
+    "MUSCLES",
+    "nice",
+    "peak",
+    "you’re a legend",
+    "keep goiiingg",
+    "on fire",
+    "totally crushing it fr",
+    "yippee",
+    "type shi",
+    "amazing",
+    "wowoow",
+    "you got this",
+    "such skill",
+    "amazing joobbb",
+    "pure raw skill",
+    "cracked",
+    "look at uuuu",
+    "shining bright",
+    "woowowowowowowowow",
+    "BARKBARKBARK",
+    "jacked",
+    "absolute pro",
+    "so flawless",
+    "next level",
+    "greatjob",
+    "cooking",
+    "u are so locked in",
+    "glowing up actively",
+    "that’s a win",
+    "im running out of prompt ideas",
+    "pure fire",
+    "killing it",
+    "crushin goals",
+    "look at u go",
+    "steady slayin",
+    "killing it",
+    "meow",
+    "meowmeowmeow",
+    "a diva",
+    "magical",
+    "indian bodybuilder type shi",
+    "so iconic",
+    "i love cats",
+    "u should text me",
+    "skills",
+    "waowowowoawowowow",
+    "AMAZING SO GREAT",
+    "are u locked in",
+    "on that grind",
+    "absolute GOD",
+    "next lvl",
+    "glowing",
+    "hustling",
+    "shine bright like a diamond",
+    "drink smth",
+    "sosososo good",
+    "WOW",
+    "AGAIN",
+    "maybe u should do another rep",
+    "im hungry",
+    "i love coffee",
+    "we should play roblox",
+    "we should call",
+    "chipotle sounds good rn",
+    "EVERY WEEK WOWW",
+    "i love cats",
+    "coding hurts my head",
+    "AMAZING!!!!!!!!!!!!!!!!!!!!",
+    "do another",
+    "another",
+    "WOW",
+    "im listening to lady gaga rn",
+    "i want a smoothie",
+    "unstoppable",
+    "hype",
+    "diva",
+    "love the GRIND",
+    "locked in",
+    "totally iconic",
+    "girl boss diva queen slayer",
+    "Idk what to put",
+    "my hand hurts from typing",
+    "i ate a burger today",
+    "sooo good",
+    "golden",
+    "cracked",
+    "meow"
+  ];
+
+  workouts.forEach(item => {
+    // tabindex already set in HTML for focus, but set here just in case
+    if (!item.hasAttribute('tabindex')) {
+      item.tabIndex = 0;
+    }
+
+    function showPopupMessage() {
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+
+      let bubble = item.querySelector('.speech-bubble');
+      if (!bubble) {
+        bubble = document.createElement('div');
+        bubble.className = 'speech-bubble';
+        item.appendChild(bubble);
+      }
+
+      bubble.textContent = msg;
+      bubble.classList.add('show');
+
+      setTimeout(() => {
+        bubble.classList.remove('show');
+      }, 2000);
+    }
+
+    function toggleCheck() {
+      const wasChecked = item.classList.contains('checked');
+      if (!wasChecked) {
+        item.classList.add('checked', 'bounce-sparkle');
+        showPopupMessage();
+      } else {
+        item.classList.remove('checked');
+      }
+
+      item.addEventListener('animationend', () => {
+        item.classList.remove('bounce-sparkle');
+      }, { once: true });
+    }
+
+    item.addEventListener('click', toggleCheck);
+    item.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleCheck();
+      }
+    });
+  });
+
+  // COLLAPSIBLE DAYS & TOGGLE ICONS
+  const days = document.querySelectorAll('.day');
+  days.forEach(day => {
+    const header = day.querySelector('h2');
+    header.addEventListener('click', () => {
+      day.classList.toggle('collapsed');
+      // Toggle arrow icon direction
+      const icon = header.querySelector('.toggle-icon');
+      if (day.classList.contains('collapsed')) {
+        icon.textContent = '▸';
+      } else {
+        icon.textContent = '▾';
+      }
+    });
+  });
+
+  // Scroll animations: reveal days when they come into view
+  const observerOptions = {
+    threshold: 0.15,
+  };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, observerOptions);
+  days.forEach(day => {
+    day.classList.add('animate');
+    observer.observe(day);
+  });
+
+  // WEEK TRACKER AND AUTO-LOCK TO TODAY
+  const weekTracker = document.querySelector('.week-tracker');
+  const todayInfo = document.querySelector('.today-info');
+  const dayNames = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const dayFullNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  // get today's date info
+  const now = new Date();
+  const todayDayIndex = now.getDay();
+  const todayDateNum = now.getDate();
+  const monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+  const todayMonthName = monthNames[now.getMonth()];
+
+  // build week tracker minimal boxes with day abbrev and date number
+  for (let i = 0; i < 7; i++) {
+    const box = document.createElement('div');
+    box.className = 'day-box';
+    const dayAbbr = document.createElement('div');
+    dayAbbr.className = 'abbr';
+    dayAbbr.textContent = dayNames[i];
+    const dateSpan = document.createElement('div');
+    dateSpan.className = 'date';
+    
+    // Calculate date for each day in current week, relative to today
+    const diff = i - todayDayIndex;
+    const dayDate = new Date(now);
+    dayDate.setDate(now.getDate() + diff);
+    dateSpan.textContent = dayDate.getDate();
+
+    box.appendChild(dayAbbr);
+    box.appendChild(dateSpan);
+    weekTracker.appendChild(box);
+
+    if (i === todayDayIndex) {
+      box.classList.add('active');
+    }
+  }
+
+  // show today's workout info below header
+  todayInfo.textContent = `today's workout: ${dayFullNames[todayDayIndex]}, ${todayMonthName} ${todayDateNum}`;
+
+  // lock workout day to current day
+  function lockToToday() {
+    // day sections are 1-indexed from Monday, so Sunday (0) = day7
+    const daySectionId = (todayDayIndex === 0) ? 7 : todayDayIndex;
+
+    days.forEach((day, i) => {
+      if (i + 1 === daySectionId) {
+        day.classList.remove('collapsed');
+        day.scrollIntoView({behavior:'smooth', block:'start'});
+        // set toggle icon
+        const icon = day.querySelector('.toggle-icon');
+        if (icon) icon.textContent = '▾';
+      } else {
+        day.classList.add('collapsed');
+        const icon = day.querySelector('.toggle-icon');
+        if (icon) icon.textContent = '▸';
+      }
+    });
+  }
+  lockToToday();
+</script>
+</body>
+</html>
